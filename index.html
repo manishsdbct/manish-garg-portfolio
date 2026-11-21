@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manish Garg — Engineering notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Editorial journal template */
+:root{--stone:#f7f9fc!important;--paper:#fff!important;--ink:#172033!important;--mute:#5e6a7d!important;--line:#dde4ed!important;--brick:#3157a5!important;--brick2:#24447f!important;--night:#172033!important;--tint:#eef3fa!important}
+body{background:#f7f9fc!important;font-family:"Schibsted Grotesk",system-ui,sans-serif!important}
+header{background:rgba(255,255,255,.96)!important}.brand{font-family:"Schibsted Grotesk",system-ui,sans-serif!important}.brand i{background:#172033!important}
+.intro h1,.head h2,.post h3,.wcard h3,.stat-grid strong,.expertise-grid h3{font-family:"Schibsted Grotesk",system-ui,sans-serif!important}
+@media(max-width:900px){header .wrap{width:calc(100% - 24px);height:64px}main.wrap,footer .wrap{width:calc(100% - 28px)}nav a[aria-current]{box-shadow:inset 0 -2px var(--brick)}.hello{grid-template-columns:1fr}.intro h1{font-size:clamp(44px,12vw,68px)}.feature{min-height:440px}.feature img{height:440px}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.expertise-grid{grid-template-columns:1fr}}
+@media(max-width:600px){header .wrap{width:calc(100% - 20px)}main.wrap,footer .wrap{width:calc(100% - 36px)}.brand em{display:none}.brand i{width:32px;height:32px}.view{padding-top:36px}.feature{min-height:390px;box-shadow:8px 8px 0 #dcd5c7}.feature img{height:390px}.feature .fb{left:10px;right:10px;bottom:10px}.stat-grid{grid-template-columns:1fr}.head h2{font-size:36px}}
+/* VOICE: an engineer's own notebook — plain-spoken, specific, numbers over adjectives.
+   IDEA: a technical journal: each project is a filed report, each post a lab note with its measurements.
+   PICTURE: the opening screen pairs a large featured-work panel (ScanArth results screen) with the latest notes.
+   COLOUR and TYPE: stone ground, white panels, black ink, brick accent; Schibsted Grotesk throughout, mono only for code.
+   LAYOUT: slim top bar; Home, Work, Writing, About and one page per post, routed on the hash. */
+:root{--stone:#f5f7fa;--paper:#fff;--ink:#0f172a;--mute:#4b5565;--line:#e3e8ef;--brick:#1d4ed8;--brick2:#1e40af;--night:#0f172a;--tint:#eef3ff;color-scheme:light}
+:root[data-theme=dark],:root[data-theme=light]{color-scheme:light}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--stone);color:var(--ink);font:16.5px/1.6 "Schibsted Grotesk",system-ui,sans-serif;overflow-x:clip}
+a{color:inherit}
+h1,h2,h3{font-weight:800;letter-spacing:-.025em;line-height:1.06;text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,3.6vw,40px)}
+h3{font-size:21px;line-height:1.2;letter-spacing:-.015em}
+p{margin:0}
+.mute{color:var(--mute)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--brick);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(4vw,18px)}
+/* top bar */
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;min-height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:800;font-size:18px;white-space:nowrap}
+.brand i{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--brick);color:#fff;font-style:normal;font-size:14px}
+.brand i{flex:none}.brand em{font-style:normal}
+.brand span{font-weight:500;color:var(--mute);font-size:15px}
+nav{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+nav a{flex:none;display:flex;align-items:center;min-height:44px;padding:0 13px;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px;color:var(--mute)}
+nav a:hover{color:var(--ink);background:#eef1f5}
+nav a[aria-current]{background:var(--tint);color:var(--brick2)}
+.view{display:none;padding:clamp(32px,5vw,64px) 0 80px}
+.view.on{display:block}
+/* home */
+.hello{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(24px,4vw,48px);align-items:stretch}
+.hello h1{font-size:clamp(38px,5vw,62px);line-height:1}
+.hello h1 b{color:var(--brick)}
+.intro{display:flex;flex-direction:column;justify-content:center}
+.intro p{font-size:18.5px;margin-top:18px;max-width:46ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:22px;font-size:14.5px;color:var(--mute)}
+.meta span::before{content:"● ";color:var(--brick);font-size:10px;vertical-align:2px}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.btn{display:inline-flex;align-items:center;min-height:46px;padding:0 18px;border-radius:12px;font-weight:700;font-size:15px;text-decoration:none;border:1.5px solid #cbd5e1;background:#fff}
+.btn:hover{border-color:var(--ink)}
+.btn.solid{background:var(--ink);color:#fff}
+.btn.red{background:var(--brick);border-color:var(--brick);color:#fff}
+.btn.red:hover{background:var(--brick2)}
+.feature{display:flex;flex-direction:column;background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;text-decoration:none;box-shadow:0 12px 32px -18px rgba(15,23,42,.2)}
+.feature img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;border-bottom:1px solid var(--line)}
+.feature .fb{padding:20px 22px 22px}
+.label{display:inline-block;font-size:13px;font-weight:700;color:#fff;background:var(--brick);padding:3px 9px;border-radius:6px;margin-bottom:10px}
+.label.dark{background:var(--ink)}
+.feature h3{font-size:24px}
+.feature p{margin-top:8px;color:var(--mute);font-size:15.5px}
+.more{display:inline-flex;align-items:center;min-height:44px;font-weight:700;color:var(--brick2);text-decoration:none;font-size:15px}
+.more:hover{text-decoration:underline}
+.head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin:clamp(48px,6vw,80px) 0 22px;flex-wrap:wrap}
+.head h2{font-size:clamp(32px,4vw,48px)}
+/* post cards */
+.posts{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr))}
+.post{display:flex;flex-direction:column;background:var(--paper);border-radius:18px;padding:22px;text-decoration:none;border:1px solid var(--line);transition:border-color .15s}
+.post:hover{border-color:#94a3b8;box-shadow:0 10px 28px -14px rgba(15,23,42,.18)}
+.post .pm{display:flex;gap:10px;flex-wrap:wrap;font-size:13.5px;color:var(--mute);margin-bottom:10px}
+.post .pm b{color:var(--brick2);font-weight:700}
+.post h3{margin-bottom:8px}
+.post p{font-size:15px;color:var(--mute);margin-bottom:14px}
+.post .stat{margin-top:auto;display:flex;align-items:baseline;gap:10px;padding-top:14px;border-top:1px solid var(--line)}
+.post .stat strong{color:var(--brick);font-size:26px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.post.big{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center}
+.post.big h3{font-size:clamp(24px,2.8vw,32px)}
+.post.big img{width:100%;border-radius:12px;aspect-ratio:16/9;object-fit:cover;object-position:top}
+/* work */
+.work{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.wcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;flex-direction:column}
+.wcard img{display:block;width:calc(100% + 44px);max-width:none;margin:-22px -22px 18px;aspect-ratio:16/9;object-fit:cover;object-position:top;border-radius:18px 18px 0 0;border-bottom:1px solid var(--line)}
+.wcard .where{font-size:13.5px;color:var(--mute);margin-bottom:6px}
+.wcard h3{margin-bottom:8px}
+.wcard p{font-size:15px;color:var(--mute)}
+.wcard .big{font-size:40px;font-weight:800;letter-spacing:-.03em;color:var(--brick);line-height:1;margin:6px 0 10px;white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:14px 0 0}
+.chips li{font-size:12.5px;font-weight:600;padding:3px 9px;border-radius:999px;background:#f1f4f8;color:#334155;border:1px solid var(--line)}
+.wcard .chips{margin-top:auto;padding-top:14px}
+.links{display:flex;flex-wrap:wrap;gap:4px 16px}
+.sa{background:var(--night);color:#f1eee9;border-radius:24px;padding:clamp(22px,3vw,36px);display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(20px,3vw,40px);align-items:center}
+.sa .mute{color:#aab4c5}
+.sa h2{font-size:clamp(34px,4.4vw,52px)}
+.sa .chips li{background:#1e293b;color:#dbe4f0;border-color:#334155}
+.sa .more{color:#9db8ff}
+.viewer{background:#1e293b;border-radius:16px;overflow:hidden}
+.viewer img{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#fff}
+.vbar{display:flex;align-items:center;gap:10px;padding:10px 12px}
+.vbar span{flex:1;text-align:center;font-size:14px;color:#aab4c5}
+.vbtn{min-width:44px;min-height:44px;border-radius:10px;border:0;background:#334155;color:#fff;font:inherit;font-size:20px;cursor:pointer}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:0 12px 12px}
+.thumbs button{flex:none;width:78px;padding:0;border:2px solid transparent;border-radius:6px;background:none;cursor:pointer;opacity:.55}
+.thumbs button[aria-current]{border-color:#9db8ff;opacity:1}
+.thumbs img{display:block;width:100%;border-radius:4px}
+/* writing */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
+.filters button{min-height:42px;padding:0 15px;border-radius:999px;border:1.5px solid #cbd5e1;background:#fff;font:inherit;font-weight:600;font-size:14.5px;cursor:pointer}
+.filters button[aria-pressed=true]{background:var(--brick);border-color:var(--brick);color:#fff}
+/* article */
+.art{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:clamp(24px,5vw,72px);max-width:860px;margin:0 auto;box-shadow:0 1px 2px rgba(15,23,42,.04),0 12px 32px -16px rgba(15,23,42,.12)}
+.back{display:inline-flex;align-items:center;min-height:44px;font-weight:700;text-decoration:none;color:var(--brick2);margin-bottom:10px}
+.art h1{font-size:clamp(32px,4.6vw,50px);line-height:1.04}
+.art .dek{font-size:20px;color:var(--mute);margin-top:16px;line-height:1.5}
+.art .pm{display:flex;flex-wrap:wrap;gap:6px 16px;margin:22px 0 30px;padding-bottom:22px;border-bottom:1px solid var(--line);font-size:14.5px;color:var(--mute)}
+.art .pm b{color:var(--ink)}
+.body{font:19px/1.75 "Source Serif 4",Georgia,serif;color:#1f2937}
+.body h2{font-family:"Schibsted Grotesk",sans-serif;color:var(--ink)}
+.body .tbl,.body figcaption,.body pre{font-family:"Schibsted Grotesk",sans-serif}
+.body pre{font-family:"JetBrains Mono",monospace}
+.body p,.body ul,.body ol{margin:0 0 20px;max-width:68ch}
+.body h2{font-size:clamp(23px,2.6vw,28px);margin:38px 0 14px}
+.body li{margin-bottom:8px}
+.body li::marker{color:var(--brick)}
+.body strong{font-weight:700}
+.body code{font:500 .8em "JetBrains Mono",monospace;background:#f1f5f9;color:#1e293b;padding:2px 6px;border-radius:5px;overflow-wrap:anywhere}
+.body pre{background:#0f172a;color:#e2e8f0;border-radius:14px;padding:18px 20px;overflow-x:auto;font:14px/1.6 "JetBrains Mono",monospace;margin:0 0 22px}
+.body pre code{background:none;padding:0;color:inherit;font-size:inherit}
+.body figure{margin:8px 0 26px}
+.body figure img{width:100%;border-radius:12px;border:1px solid var(--line)}
+.body figcaption{font-size:14px;color:var(--mute);margin-top:8px}
+.body .pull{border-left:4px solid var(--brick);background:var(--tint);border-radius:0 12px 12px 0;padding:16px 20px;font-size:22px;font-weight:600;line-height:1.45;margin:30px 0;color:var(--ink)}
+.tbl{overflow-x:auto;margin:0 0 24px}
+.tbl table{border-collapse:collapse;width:100%;font-size:15px;line-height:1.45}
+.tbl th,.tbl td{text-align:left;padding:10px 12px 10px 0;border-top:1px solid var(--line);vertical-align:top}
+.tbl th{font-size:13.5px;color:var(--mute);font-weight:700;border-top:0;border-bottom:2px solid var(--ink);background:none}
+.tbl td.n,.tbl th.n{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.copy{float:right;margin:-6px -6px 0 0;min-height:32px;padding:0 10px;border-radius:8px;border:1px solid #334155;background:#1e293b;color:#cbd5e1;font:600 12.5px "Schibsted Grotesk",sans-serif;cursor:pointer}
+.next{margin-top:40px;padding-top:24px;border-top:1px solid var(--line)}
+/* about */
+.about{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(24px,4vw,56px)}
+.about .body p{font-size:18px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:24px}
+.tl{list-style:none;padding:0;margin:0}
+.tl li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.tl li:first-child{border-top:0;padding-top:4px}
+.tl .y{font-size:14px;color:var(--mute);font-variant-numeric:tabular-nums}
+.tl b{display:block}
+.tl span{font-size:14.5px;color:var(--mute)}
+.contact{display:grid;gap:10px;margin-top:16px}
+.contact a,.contact div{display:flex;justify-content:space-between;align-items:center;gap:10px;min-height:52px;padding:10px 16px;border-radius:12px;background:var(--stone);border:1px solid var(--line);text-decoration:none;font-weight:600;word-break:break-word}
+.contact small{font-weight:500;color:var(--mute);white-space:nowrap}
+.cbtn{min-height:38px;padding:0 12px;border-radius:9px;border:1.5px solid var(--ink);background:none;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+footer{border-top:1px solid var(--line);padding:26px 0;font-size:14px;color:var(--mute)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media(max-width:860px){.hello,.sa,.about{grid-template-columns:1fr}.post.big{grid-template-columns:1fr}.brand span{display:none}}
+@media(max-width:600px){header .wrap{gap:8px}.brand em{display:none}nav a{padding:0 10px;font-size:14px}.body{font-size:17px}.tl li{grid-template-columns:1fr;gap:2px}}
+/* Home page reference-style executive layout */
+#v-home .hello{align-items:center;min-height:calc(100vh - 145px);padding-bottom:48px}
+#v-home .intro{max-width:680px}
+#v-home .intro h1{max-width:9ch}
+#v-home .feature{max-height:610px}
+#v-home .feature img{aspect-ratio:1/1;object-position:center}
+#v-home .feature .fb{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,rgba(16,27,49,.02),rgba(16,27,49,.94));color:#fff;padding-top:80px}
+#v-home .feature{position:relative;min-height:520px}.feature .fb p{color:#dbe3ef}.feature .fb h3{color:#fff}
+#v-home .head{padding-top:20px;border-top:1px solid var(--line)}
+#v-home .stat-grid{box-shadow:0 20px 50px rgba(16,27,49,.06)}
+#v-home .expertise-grid article{border-top:3px solid var(--brick);box-shadow:0 12px 32px rgba(16,27,49,.04)}
+@media(max-width:900px){#v-home .hello{min-height:auto;padding-bottom:20px}#v-home .feature{min-height:420px}#v-home .feature img{aspect-ratio:4/3}}
+</style>
+<style id="editorial-final">
+:root{--stone:#f4f0e7;--paper:#fffdf8;--ink:#1b1c19;--mute:#62655f;--line:#ded9cf;--brick:#a64b3c;--brick2:#80372d;--night:#20221e;--tint:#eee7dc;color-scheme:light}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--stone)!important;color:var(--ink)!important;font:16px/1.6 "Schibsted Grotesk",system-ui,sans-serif!important}
+header{position:sticky!important;top:0!important;left:auto!important;bottom:auto!important;width:100%!important;height:76px!important;border:0!important;border-bottom:1px solid var(--line)!important;background:rgba(255,253,248,.96)!important;backdrop-filter:blur(12px)!important;color:var(--ink)!important}
+header .wrap{width:min(1180px,calc(100% - 48px))!important;height:76px!important;min-height:76px!important;max-width:none!important;margin:0 auto!important;padding:0!important;display:flex!important;flex-direction:row!important;align-items:center!important;justify-content:space-between!important}
+.brand{color:var(--ink)!important;font-family:"Source Serif 4",Georgia,serif!important;font-size:19px!important}.brand i{width:38px!important;height:38px!important;border-radius:50%!important;background:var(--ink)!important;color:#fff!important}.brand em{display:inline!important}.brand span{display:none!important}
+nav{display:flex!important;flex-direction:row!important;gap:24px!important;overflow:visible!important}nav a{min-height:76px!important;padding:0!important;border-radius:0!important;display:flex!important;align-items:center!important;color:var(--mute)!important;font-size:13px!important;text-transform:uppercase!important;letter-spacing:.09em!important}nav a:hover{background:transparent!important;color:var(--ink)!important}nav a[aria-current]{background:transparent!important;color:var(--ink)!important;box-shadow:inset 0 -3px var(--brick)!important}
+main.wrap{width:min(1180px,calc(100% - 48px))!important;max-width:none!important;margin:0 auto!important;padding:0!important}
+.view{min-height:calc(100vh - 76px)!important;padding:72px 0 88px!important}.view.on{display:block!important}
+footer{margin-left:0!important;border:0!important;background:var(--night)!important;color:#c8ccca!important}footer .wrap{width:min(1180px,calc(100% - 48px))!important;max-width:none!important}footer a{color:#fff!important}
+.hello{grid-template-columns:minmax(0,.92fr) minmax(400px,1fr)!important;gap:clamp(32px,5vw,72px)!important;align-items:center!important;min-height:calc(100vh - 76px)!important;padding:20px 0 48px!important}
+.intro{max-width:620px}.intro h1{max-width:10ch;font-family:"Source Serif 4",Georgia,serif!important;font-size:clamp(52px,5.4vw,72px)!important;line-height:1.02!important;font-weight:800!important;letter-spacing:-.045em!important}
+.intro p{max-width:38rem;font-family:"Schibsted Grotesk",system-ui,sans-serif!important;font-size:18px!important;line-height:1.7!important;color:#526071!important}
+.eyebrow{color:#3157a5!important}
+.meta{margin-top:26px!important;padding-top:16px!important;border-top:1px solid var(--line)!important}.meta span::before{color:#3157a5!important}
+.btns{margin-top:28px!important}
+.btn{min-height:50px!important;border-radius:2px!important;font-size:13px!important;text-transform:uppercase!important;letter-spacing:.06em!important}
+.btn.red{background:#3157a5!important;border-color:#3157a5!important}
+.btn.red:hover{background:#24447f!important}
+.feature{min-height:480px!important;height:min(480px,55vh)!important;max-height:none!important;box-shadow:0 18px 45px rgba(31,55,94,.14)!important;background:#eef2f7!important}
+.feature img{height:100%!important;aspect-ratio:16/10!important;object-fit:cover!important;object-position:center top!important}
+.feature .fb{left:14px!important;right:14px!important;bottom:14px!important;background:#fff!important;border:1px solid #dfe6ef!important;box-shadow:0 10px 28px rgba(31,55,94,.12)!important;color:#172033!important}
+.feature .fb h3,#v-home .feature .fb p{color:#172033!important}
+.label{border-radius:2px!important;background:var(--brick)!important}
+.head{border-top:1px solid var(--ink)!important;padding-top:18px!important;margin:72px 0 24px!important}
+.head h2{font-family:"Source Serif 4",Georgia,serif!important;font-size:44px!important;font-weight:600!important}
+.more{color:var(--brick)!important;text-transform:uppercase!important;letter-spacing:.06em!important;font-size:13px!important}
+.posts{display:grid!important;gap:22px!important}
+.post{border-radius:0!important;border:1px solid var(--line)!important;background:var(--paper)!important;padding:26px!important}
+.post:hover{border-color:#bdb5a7!important;box-shadow:0 14px 34px rgba(44,40,32,.08)!important;transform:none!important}
+.post h3{font-family:"Source Serif 4",Georgia,serif!important;font-size:25px!important}
+.post .pm b{color:var(--brick)!important}
+.post .stat strong{color:var(--brick)!important;font-family:"Source Serif 4",Georgia,serif!important}
+.work{gap:22px!important}
+.wcard{border-radius:0!important;border:1px solid var(--line)!important;background:var(--paper)!important}
+.wcard h3{font-family:"Source Serif 4",Georgia,serif!important}
+.wcard .big{color:var(--brick)!important;font-family:"Source Serif 4",Georgia,serif!important}
+.chips li{border-radius:2px!important;background:var(--tint)!important;border-color:var(--line)!important}
+.stat-grid{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:12px!important;background:transparent!important;border:0!important}
+.stat-grid article{border:1px solid var(--line)!important;border-radius:0!important;background:var(--paper)!important}
+.stat-grid strong{color:var(--brick)!important;font-family:"Source Serif 4",Georgia,serif!important}
+.expertise-grid{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:18px!important}
+.expertise-grid article{min-height:190px!important;border:0!important;border-top:3px solid var(--brick)!important;border-radius:0!important;background:var(--paper)!important}
+.expertise-grid h3{font-family:"Source Serif 4",Georgia,serif!important}
+.sa{border-radius:0!important}.viewer{border-radius:0!important}.filters button{border-radius:2px!important}.filters button[aria-pressed=true]{background:var(--brick)!important;border-color:var(--brick)!important}
+.art,.panel{border-radius:0!important}.art{background:var(--paper)!important}.body h2{font-family:"Source Serif 4",Georgia,serif!important;border-bottom:0!important}.body .pull{border-left-color:var(--brick)!important;background:var(--tint)!important}
+@media(max-width:900px){header{height:68px!important}header .wrap{width:calc(100% - 32px)!important;height:68px!important}main.wrap{width:calc(100% - 32px)!important}footer .wrap{width:calc(100% - 32px)!important}nav{gap:14px!important}nav a{min-height:68px!important;font-size:12px!important}.hello{grid-template-columns:1fr!important;min-height:auto!important;padding-top:8px!important}#v-home .hello{grid-template-columns:1fr!important;min-height:auto!important;padding-top:8px!important}#v-home .feature{min-height:420px!important;height:420px!important;max-height:none!important}#v-home .feature img{height:100%!important}}
+@media(max-width:600px){header{height:64px!important}header .wrap{width:calc(100% - 24px)!important;height:64px!important}main.wrap{width:calc(100% - 36px)!important}footer .wrap{width:calc(100% - 36px)!important}.brand em{display:none!important}nav{gap:10px!important}nav a{min-height:64px!important;font-size:10px!important}.view{padding:40px 0 64px!important}.hello{gap:30px!important}.intro h1{font-size:42px!important}.feature{min-height:360px!important;height:360px!important}#v-home .feature{min-height:360px!important;height:360px!important}#v-home .feature img{height:100%!important}}
+#v-home .hello{padding-bottom:12px!important}
+#v-home .head.home-impact{margin-top:32px!important}
+#v-home .stat-grid article{padding:22px!important}
+#v-home .stat-grid p{max-width:26ch!important}
+@media(max-width:900px){#v-home .head.home-impact{margin-top:20px!important}#v-home .head{margin-top:48px!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="brand" href="#home"><i>MG</i><em>Manish Garg</em> <span>· engineering notes</span></a>
+  <nav id="nav"><a href="#home">Overview</a><a href="#about">Profile</a><a href="#work">Work</a><a href="#writing">Insights</a></nav>
+</div></header>
+
+<main class="wrap">
+<!-- HOME -->
+<section class="view" id="v-home">
+  <div class="hello">
+    <div class="intro">
+      <span class="eyebrow">Chief Engineer · Samsung Research</span>
+      <h1>Building scalable platforms and <b>production AI</b>.</h1>
+      <p class="mute">Engineering leader with 12+ years across distributed systems, high-scale applications and AI products — focused on measurable impact, resilient architecture and teams that deliver.</p>
+      <div class="meta"><span>Noida, India</span><span>Backend · AI · Engineering leadership</span></div>
+      <div class="btns"><a class="btn red" href="#about">View profile</a><a class="btn" href="#work">Explore my work</a><a class="btn" href="https://www.linkedin.com/in/manish-garg-a3520840/" target="_blank" rel="noopener">LinkedIn ↗</a></div>
+    </div>
+    <a class="feature" href="#work">
+      <img src="slides/s-04.jpg" alt="ScanArth results screen: a chest X-ray with numbered markers next to plain-language sections">
+      <div class="fb"><span class="label">My flagship project</span><h3>ScanArth: X-ray, CT and MRI explained in plain words</h3><p>A pilot-ready AI app that turns a phone photo of a scan into a plain-language explanation in English or Hindi — with safety rules written in code, not prompts.</p></div>
+    </a>
+  </div>
+  <div class="head home-impact"><div><span class="eyebrow">Career in numbers</span><h2>Engineering impact</h2></div></div>
+  <div class="stat-grid">
+    <article><strong>12+</strong><h3>Years of experience</h3><p>Backend platforms and high-scale applications.</p></article>
+    <article><strong>3000+</strong><h3>Peak requests per second</h3><p>At Rakuten's payment platform.</p></article>
+    <article><strong>80%</strong><h3>Less manual curation</h3><p>Through LLM workflows at Samsung.</p></article>
+    <article><strong>10+</strong><h3>Engineers mentored</h3><p>Across backend and AI engineering teams.</p></article>
+  </div>
+  <div class="head"><div><span class="eyebrow">Selected work</span><h2>Projects & engineering highlights</h2></div><a class="more" href="#work">View all work →</a></div>
+  <div class="work" id="homeWork"></div>
+  <div class="head"><div><span class="eyebrow">Field notes</span><h2>Recent insights</h2></div><a class="more" href="#writing">All insights →</a></div>
+  <div class="posts" id="homePosts"></div>
+</section>
+
+<!-- WORK -->
+<section class="view" id="v-work">
+  <h1 style="font-size:clamp(36px,5vw,56px)">My projects</h1>
+  <p class="mute" style="font-size:18.5px;margin-top:12px;max-width:60ch">Products I design and build end to end on my own time — and a few highlights from my day job. Each project links to the notes I wrote about it.</p>
+  <div class="sa" style="margin-top:32px">
+    <div>
+      <span class="label">Flagship project · private repository</span>
+      <h2>ScanArth</h2>
+      <p class="mute" style="margin-top:12px">Helps patients understand their X-ray, CT or MRI in simple words, from a phone photo of the film. FastAPI API, a Redis worker and an AI pipeline: image prep → fine-tuned chest model → optional reader → Claude → safety rules in code. Web and Android apps, AWS CDK infrastructure, an LLM-as-judge accuracy harness.</p>
+      <p style="margin-top:12px;font-size:14.5px;color:#9db8ff;font-weight:600">Pilot-ready prototype · AWS test stage, test scans only · Nov 2026</p>
+      <ul class="chips"><li>Python</li><li>FastAPI</li><li>Claude</li><li>PyTorch</li><li>MedGemma</li><li>Redis</li><li>Postgres</li><li>Kotlin</li><li>AWS CDK</li></ul>
+      <div class="links" style="margin-top:14px"><a class="more" href="#safety-in-code">Safety rules in code →</a><a class="more" href="#eval-harness">The eval harness →</a><a class="more" href="#llm-cost">Cost per scan →</a></div>
+    </div>
+    <div class="viewer" aria-label="Slides from the ScanArth prototype review">
+      <img id="slideImg" src="slides/s-01.jpg" alt="">
+      <div class="vbar"><button class="vbtn" id="prev" type="button" aria-label="Previous slide">‹</button><span id="slideCap"></span><button class="vbtn" id="next" type="button" aria-label="Next slide">›</button></div>
+      <div class="thumbs" id="thumbs"></div>
+    </div>
+  </div>
+  <div class="head"><h2>More of my projects</h2><a class="more" href="https://github.com/manishsdbct?tab=repositories" target="_blank" rel="noopener">GitHub ↗</a></div>
+  <div class="work" id="side"></div>
+  <div class="head"><div><h2>Highlights from my day job</h2><p class="mute" style="margin-top:8px">Samsung Research, Rakuten and MakeMyTrip.</p></div></div>
+  <div class="work" id="job"></div>
+</section>
+
+<!-- WRITING -->
+<section class="view" id="v-writing">
+  <h1 style="font-size:clamp(36px,5vw,56px)">Writing</h1>
+  <p class="mute" style="font-size:18.5px;margin-top:12px;max-width:60ch">Engineering notes from building LLM products: what worked, what didn't, and the numbers behind both.</p>
+  <div class="filters" id="filters"></div>
+  <div class="posts" id="allPosts"></div>
+</section>
+
+<!-- POST -->
+<section class="view" id="v-post"><article class="art" id="art"></article></section>
+
+<!-- ABOUT -->
+<section class="view" id="v-about">
+  <div class="about">
+    <div>
+      <h1 style="font-size:clamp(36px,5vw,56px)">About</h1>
+      <div class="body" style="margin-top:22px">
+        <p>I'm Manish, an engineering leader with 12+ years of building backend platforms, distributed systems and high-traffic applications across fintech, e-commerce, travel and edtech.</p>
+        <p>Today I'm a Chief Engineer at Samsung Research, where I lead backend and AI engineering for Samsung's AI-enabled learning platform for Smart TVs and mentor a team of 10+ engineers. My work there includes LLM workflows that cut manual content-curation effort by nearly 80%, and an assistant that turns live lecture audio into summaries and quizzes.</p>
+        <p>Before that I led Rakuten's move from a monolith to microservices — APIs 2.3x faster, deployments down from 6 hours to 2, 3000+ QPS at peak — and worked on booking and payment systems at MakeMyTrip, JustClickKaro and ITZ Cash Card.</p>
+        <p>Outside work I build AI products end to end, like ScanArth, and write up what I learn here.</p>
+      </div>
+      <h3 style="margin:30px 0 4px">Toolbox</h3>
+      <ul class="chips"><li>Java</li><li>Python</li><li>Go</li><li>Spring Boot</li><li>FastAPI</li><li>Kafka</li><li>RabbitMQ</li><li>Redis</li><li>Postgres</li><li>MongoDB</li><li>AWS</li><li>Docker</li><li>Kubernetes</li><li>LangChain</li><li>LangGraph</li><li>RAG</li><li>Vector DBs</li><li>Claude</li><li>OpenAI</li><li>Bedrock</li><li>PyTorch</li><li>MCP</li></ul>
+    </div>
+    <div style="display:grid;gap:16px;align-content:start">
+      <div class="panel">
+        <h3 style="margin-bottom:12px">Experience</h3>
+        <ul class="tl">
+          <li><div class="y">2022 – now</div><div><b>Samsung Research</b><span>Chief Engineer · backend and AI for a Smart TV learning platform</span></div></li>
+          <li><div class="y">2019 – 2022</div><div><b>Rakuten</b><span>Senior Software Engineer · monolith to microservices, payments</span></div></li>
+          <li><div class="y">2018 – 2019</div><div><b>JustClickKaro</b><span>Senior Software Engineer · travel booking and payments</span></div></li>
+          <li><div class="y">2018</div><div><b>MakeMyTrip</b><span>Senior Software Engineer · booking platform performance</span></div></li>
+          <li><div class="y">2015 – 2018</div><div><b>ITZ Cash Card</b><span>Software Developer · IRCTC-integrated booking and payments</span></div></li>
+          <li><div class="y">2013 – 2015</div><div><b>MSS InfoTech</b><span>Software Developer · Java, Spring, SOAP</span></div></li>
+        </ul>
+        <p class="mute" style="font-size:14.5px;margin-top:12px">B.E. Computer Science, Rajiv Gandhi Technical University · Outstanding Achievement Award for a payment-validation integration</p>
+      </div>
+      <div class="panel">
+        <h3>Get in touch</h3>
+        <div class="contact">
+          <div><span>manish91garg@gmail.com</span><button class="cbtn" id="copyMail" type="button">Copy</button></div>
+          <a href="https://www.linkedin.com/in/manish-garg-a3520840/" target="_blank" rel="noopener"><span>LinkedIn</span><small>↗</small></a>
+          <a href="https://github.com/manishsdbct" target="_blank" rel="noopener"><span>GitHub</span><small>↗</small></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+<footer><div class="wrap"><span>© 2026 Manish Garg</span><span><a href="mailto:manish91garg@gmail.com">manish91garg@gmail.com</a> · <a href="https://github.com/manishsdbct" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.linkedin.com/in/manish-garg-a3520840/" target="_blank" rel="noopener">LinkedIn</a></span></div></footer>
+
+<!-- POSTS -->
+<template id="t-safety-in-code">
+<p>The first version of ScanArth trusted the model too much. I asked Claude, in the prompt, to be careful: don't diagnose, don't name medicines, flag anything urgent. On clean test images it mostly behaved. Then real phone photos came in, and Claude Haiku started finding things that weren't there — "cavitary lesions" in three places, and a "possible pneumothorax" with an urgent warning attached.</p>
+<p>A patient reading that at home would be terrified. The lesson I took: <strong>a prompt is a request; code is a guarantee.</strong> Anything that must always be true belongs in plain code that runs after the model and can override it.</p>
+<h2>Where the rules live</h2>
+<p>ScanArth's pipeline ends with a step called <code>safety.apply()</code>. It runs on every answer, after Claude, after any retry or second look. No model output can skip it. The prompt still explains the rules — it makes good answers more likely — but the code is what makes bad ones impossible.</p>
+<pre><code>image_prep → chest model (hints) → reader (optional) → Claude → safety.apply()</code></pre>
+<h2>Urgent is decided four ways</h2>
+<p>A missed urgent finding is the worst error the app can make, so "urgent" has four independent triggers, and any one is enough:</p>
+<ul>
+<li><strong>Claude's own flag</strong> — any finding it marks <code>level: "urgent"</code>.</li>
+<li><strong>Words</strong> — an urgent term in the report text or in a finding's English term: pneumothorax, displaced fracture, haemorrhage, cord compression, pulmonary embolism and others.</li>
+<li><strong>Pictures</strong> — a finding mapped to the <code>pneumothorax</code>, <code>fracture_displaced</code>, <code>brain_bleed</code> or <code>stroke</code> drawing.</li>
+<li><strong>The specialist model</strong> — Pneumothorax ≥ 0.7 or Fracture ≥ 0.8, counted only when Claude confirms it's a chest X-ray.</li>
+</ul>
+<p>When any of them fires, the summary starts with "Please see a doctor today about this scan," the next step is replaced, and the plan's timing is forced to <code>today</code>.</p>
+<h2>The hard part: negation</h2>
+<p>Matching urgent words naively breaks immediately. Reports are full of "No acute haemorrhage" — the most reassuring sentence a patient can read. So a term up to six words after "no", "without", "negative for", "free of", "not" or "nor", in the same sentence, is ignored.</p>
+<p>But negation has to end somewhere. Punctuation, "but", "and", "there", "new" and change words close it, so "No change in the large pneumothorax" still counts as urgent. And when the rule isn't sure, it errs one way only:</p>
+<p class="pull">When unsure, the term counts as urgent.</p>
+<p>Matching is on whole words, too: "non-displaced fracture" must not trigger "displaced fracture".</p>
+<h2>What the code removes</h2>
+<ul>
+<li><strong>Doses.</strong> Any sentence with a dose is removed from every field — in English and in Hindi units ("500 mg", "५०० मिलीग्राम"), with Hindi sentences ending at "।".</li>
+<li><strong>Medicines.</strong> Named medicines and common brands are removed; self-care items that mention any medicine, cream, remedy, herb or massage are dropped.</li>
+<li><strong>Diagnoses from a photo.</strong> Without a report, findings that name a disease are dropped (unless they sound urgent — a warning is never removed), and at most two findings survive.</li>
+<li><strong>Contradictions.</strong> A finding whose name says "right" while its <code>side</code> says "left" loses its side, so the body map lights neither.</li>
+</ul>
+<h2>What the code always adds</h2>
+<p>A fixed disclaimer, default warning signs if Claude gave none, and — on a poor photo — a note on every finding that a doctor needs to check the original scan. Each fixed message has a reviewed Hindi version, and the translator swaps those in rather than sending them to the model.</p>
+<h2>Prompt and code, working together</h2>
+<p>The code didn't replace the prompt; it changed what the prompt is for. After the invented "cavitary lesions", I added a cautious photo-only mode to the instructions: at most two large, obvious differences, described in plain words ("a whiter area"), never disease names. In repeat runs without a report, the practice X-ray got no invented findings. The prompt lowers the error rate. The code sets the floor.</p>
+<p>If you're building anything where a wrong answer hurts someone, write down the rules that must never break, and then make sure none of them depend on the model remembering.</p>
+</template>
+
+<template id="t-eval-harness">
+<p>"It looks right" is not a measurement. Once ScanArth produced sensible explanations, the real question became: <strong>how often is it right, and how does it fail?</strong> Answering that needed a harness I could run after every prompt, model or setting change.</p>
+<h2>The setup: reports as ground truth</h2>
+<p>Each test case is a folder with a scan image and its radiologist's report. The harness runs the scan through the same backend steps a real upload takes — image prep, the chest model, the explanation, the safety rules — skipping only the database and storage. By default the app does <strong>not</strong> see the report, because most patients upload only a photo.</p>
+<pre><code>data/eval/case-001/scan.jpg   ──► app pipeline ──► explanation ─┐
+                                                               ├──► judge ──► verdict
+data/eval/case-001/report.txt ─────────────────────────────────┘</code></pre>
+<p>A separate judge model then compares the explanation with the report. One decision I'm glad I made early: <strong>the judge only gets text</strong> — the report, plus the explanation's summary, findings, normal list and urgent flag. It never sees the image, so it can't second-guess the radiologist.</p>
+<h2>Five judgements per case</h2>
+<div class="tbl"><table><thead><tr><th>Judgement</th><th>Question</th></tr></thead><tbody>
+<tr><td>Report abnormal</td><td>Does the report describe at least one abnormal finding?</td></tr>
+<tr><td>Main finding</td><td>Did the explanation describe the report's most important finding? Plain words count.</td></tr>
+<tr><td>Side correct</td><td>If found, is it on the same side and in roughly the same place?</td></tr>
+<tr><td>False findings</td><td>How many findings does the report not support?</td></tr>
+<tr><td>Urgent correct</td><td>Is the urgent flag on only when same-day care is needed?</td></tr>
+</tbody></table></div>
+<p>These roll up into a table per model: main finding found, right side, false alarms, urgent OK, errors and seconds per scan. For patient safety I read them in a fixed order: urgent first (a missed urgent finding is the worst error), then left/right (a wrong side confuses patients and doctors), then false alarms (they frighten people for nothing), and only then misses — some misses are expected from a phone photo, and the app sends people to their report anyway.</p>
+<h2>Building a test set that tells the truth</h2>
+<ul>
+<li><strong>About a third normal scans.</strong> Without them you can't measure false alarms.</li>
+<li><strong>Real-world photos.</strong> Dim, angled, glare, screenshots of a viewer. Clean images alone overstate accuracy.</li>
+<li><strong>Urgent cases,</strong> so the urgent flag is actually tested.</li>
+<li><strong>Enough cases.</strong> With 20 cases, one case moves a rate by 5 points, so small differences mean nothing. Around 20 catches obvious problems; a model choice wants 100+.</li>
+</ul>
+<p>To start quickly I wrote an importer for the de-identified Indiana University chest X-ray collection, with an option to add phone-photo effects — tilt, uneven light, glare, blur and noise. It's an approximation, so real photographed films still matter.</p>
+<h2>Comparing fairly</h2>
+<p>Several models run on the same scans in one go, and image prep and the chest model run once per case, so every model sees exactly the same input. A <code>--no-review</code> flag turns off the second-look model so each model is scored on its own. The same mechanism compares readers — no reader, Claude reading, MedGemma reading — and voting with three reads.</p>
+<pre><code>python -m eval.run_eval --no-review --models claude-haiku-5-5,claude-sonnet-5-5
+python -m eval.run_eval --no-review --readers off,claude,medgemma</code></pre>
+<p>With Haiku explaining and Opus judging, a case costs about $0.004, so a 100-case run is cheap enough to do on every meaningful change. The harness asks before it spends money, and every run saves a JSON results file with the settings used — the history of how accuracy moved as prompts and rules changed.</p>
+<h2>What the harness can't tell you</h2>
+<ul>
+<li><strong>The judge is a model.</strong> It can misread a plain-language description or a location, so a clinician spot-checks 10–20% of verdicts, including some "found" ones.</li>
+<li><strong>Answers vary between runs.</strong> Treat a few points' difference on a small set as noise.</li>
+<li><strong>The report is treated as truth,</strong> and reports can be wrong.</li>
+<li><strong>It isn't clinical validation.</strong> It's a development tool for comparing versions. A pilot needs a proper protocol, ethics approval and radiologist review.</li>
+</ul>
+<p>The numbers are the start of the review, not the end. The most useful habit the harness gave me: read every missed case, every false alarm and every wrong urgent flag, look for the pattern, fix one thing, and rerun on the <em>same</em> cases.</p>
+</template>
+
+<template id="t-xray-phone-photos">
+<p>ScanArth can pass a chest X-ray model's hints to Claude: TorchXRayVision's DenseNet-121, which scores 18 findings. It was trained on clean digital X-rays. My users upload phone photos of film — tilted, glary, unevenly lit. On those, the base model hinted Fracture and Pneumothorax on almost every photo. So I fine-tuned it.</p>
+<h2>Data and labels</h2>
+<p>I used the IU X-ray (Open-I) dataset: images plus each study's radiologist caption. Two problems surfaced immediately.</p>
+<ul>
+<li><strong>The view labels were wrong for about 1 in 5 images.</strong> I let TorchXRayVision's own view classifier decide frontal or lateral, and kept one frontal image per study — 3,664 studies.</li>
+<li><strong>There were no finding labels, only captions.</strong> A rule-based labeller reads each caption and marks each finding present, absent or doubtful ("possible effusion"). Doubtful labels are left out of the loss.</li>
+</ul>
+<p>The split is by study, fixed by a hash: 76% train, 10% validation, 14% test. Any study used by the app's own eval sets is forced into test, so training never sees them.</p>
+<h2>Making training look like real life</h2>
+<p>Preprocessing copies the app exactly — grayscale, levels stretch, CLAHE, 224×224 — so the model trains on what it will see in production. Then half the training images are turned into fake phone photos: background around the film, a tilted camera, uneven light, glare, moiré, blur, noise and JPEG artefacts.</p>
+<h2>Not forgetting the rare findings</h2>
+<p>Several findings — Pneumothorax, Mass, Consolidation and others — have fewer than 40 positives in train. Training on those directly would mostly teach noise. Instead, for those findings the model is held to the original model's answer on the clean image. That keeps it from forgetting them, and the same hold teaches it to answer the same for a photo as for the clean scan.</p>
+<h2>Choosing operating points</h2>
+<p>The app treats a score ≥ 0.5 as a hint, and TorchXRayVision scales scores so 0.5 is each finding's operating point. Training picks new points on validation (clean and simulated photos together) and saves them inside the weights. Findings with at least 10 validation positives get the point that best separates present from absent. Rarer ones get the point that only 2% of scans without the finding reach — without that, Pneumothorax and Pneumonia scored just over 0.5 on almost every photo.</p>
+<h2>Results</h2>
+<div class="tbl"><table><thead><tr><th>Model</th><th>Test set</th><th class="n">Mean AUC</th><th class="n">Caught</th><th class="n">False hints</th></tr></thead><tbody>
+<tr><td>Base</td><td>Clean</td><td class="n">0.792</td><td class="n">84%</td><td class="n">45%</td></tr>
+<tr><td>Base</td><td>Simulated photo</td><td class="n">0.658</td><td class="n">73%</td><td class="n">48%</td></tr>
+<tr><td>Base</td><td>20 real photos</td><td class="n">0.906</td><td class="n">83%</td><td class="n">53%</td></tr>
+<tr><td><strong>v1</strong></td><td>Clean</td><td class="n">0.831</td><td class="n">62%</td><td class="n">10%</td></tr>
+<tr><td><strong>v1</strong></td><td>Simulated photo</td><td class="n">0.788</td><td class="n">57%</td><td class="n">12%</td></tr>
+<tr><td><strong>v1</strong></td><td>20 real photos</td><td class="n">0.922</td><td class="n">58%</td><td class="n">8%</td></tr>
+</tbody></table></div>
+<p>v1 gives a quarter as many false hints, at the cost of catching fewer findings. That trade is better at any balance: raising the base model's cut-off to match v1's false hints catches far fewer (at 0.6: 40% caught, 14% false hints on photos). On the 20 real phone photos, the base model gave 196 hints in total; v1 gave 36, and no hints on most normal scans. Training takes about 15 minutes on an M5.</p>
+<h2>The honest part</h2>
+<p class="pull">The gain so far is cleaner input, not better explanations.</p>
+<p>In the app's own eval on the 20 real photos, v1 gives the same end result as the base model: main finding caught in 29% of cases, 0.2 false alarms per case. Most misses are findings the explanation leaves out or puts on the wrong side — something hints this weak don't change. Nodule and Lung Lesion stay near chance either way: small nodules don't survive a 224×224 photo.</p>
+<p>The limits are clear too: labels come from captions by rules; several findings have under 10 test examples; the base model may have seen these images in training; and simulated photos aren't real ones. What would help most is more real phone photos with reports — which is exactly what the eval harness is waiting for.</p>
+</template>
+
+<template id="t-llm-cost">
+<p>An app for patients in India has to be cheap to run, or it doesn't get to exist. On the practice chest X-ray, a ScanArth explanation with Claude Haiku costs about <strong>$0.001</strong> — including the model's thinking. Here's where the savings come from.</p>
+<h2>1. Put everything static in a cached prefix</h2>
+<p>The system prompt and the output schema are identical for every scan, so they go first and are cached. Repeat requests within about five minutes read them from cache at roughly a tenth of the price. The per-scan message carries only what changes: the image, the scan type, the photo quality, the model's hints and the report text.</p>
+<div class="tbl"><table><thead><tr><th>Call</th><th class="n">Input tokens</th><th class="n">Output tokens</th><th class="n">Cost</th></tr></thead><tbody>
+<tr><td>Explanation (first of the day, writes the cache)</td><td class="n">1,066 + 1,412 cache write</td><td class="n">1,501</td><td class="n">~$0.001</td></tr>
+</tbody></table></div>
+<h2>2. Send a smaller picture</h2>
+<p>Image tokens grow with area — roughly width × height / 750. The pipeline enhances the photo, then shrinks it to 1024 px on the longest side before it goes to Claude. Every extra pixel is paid for on every scan, so the size is a setting I tune with the eval harness, not a default I forget about.</p>
+<h2>3. Never pay twice for the same answer</h2>
+<p>Every upload gets a SHA-256 cache key over the image bytes, report text, scan type, system prompt, schema, fixed safety messages and model settings. If a finished scan with the same key exists from the last 7 days, the new scan copies its result instantly — no Claude call, no image saved. Because the prompt and settings are in the key, an old answer is never served after a change. It only helps exact repeats (a double tap, a retry), and that's the point: it's free correctness, not a clever approximation.</p>
+<h2>4. Spend extra only where it matters</h2>
+<ul>
+<li><strong>Retries only on broken rules.</strong> If an answer breaks a rule — too many findings without a report, a disease name, sides that disagree — Claude is asked once more. Clean answers never pay for a retry.</li>
+<li><strong>A second look only on risky scans.</strong> An optional stronger model redoes answers with an urgent finding, any finding without a report, or a poor photo — where Haiku invented findings, and where a wrong answer hurts most. That adds roughly $0.02 to those scans only.</li>
+<li><strong>Translation only on request.</strong> Claude always writes in English; Hindi is translated on the first tap and saved, so later switches are instant and free. I use a stronger model here because Haiku kept turning "dark" into गहरा ("deep").</li>
+<li><strong>Fixed text never goes to the model.</strong> Safety messages have reviewed Hindi versions that are swapped in, so the translator sees only sentences Claude wrote.</li>
+</ul>
+<h2>5. Don't confuse limits with costs</h2>
+<p><code>max_tokens</code> is set to 8,000. That's a ceiling, not a cost — billing counts only tokens actually used — and it's high enough that an answer is never cut off. A cut-off or refusal is treated as a failure rather than a partial answer.</p>
+<h2>Measure it, every call</h2>
+<p>Each call logs input, cache-read, cache-write and output tokens, so cost is checked from the server log rather than estimated. The biggest lever left is thinking effort: dropping it from medium to low would cut thinking tokens further. I haven't, because the eval harness hasn't shown it's safe yet. Cheap is only good if it's still right.</p>
+</template>
+
+<template id="t-agent-guardrails">
+<p>Ordering dinner for a group is a surprisingly good test for an AI agent. "Order dinner for six people. Two are vegetarian, one has a nut allergy. Keep the total under ₹2,000 and deliver it by 8 PM." One sentence, four hard constraints — and getting the allergy wrong can send someone to hospital.</p>
+<figure><img src="img/foodagent.jpg" alt="FoodAgent start screen with sample prompts for a group dinner, a spicy paneer craving and an all-veg party" loading="lazy"><figcaption>FoodAgent's web chat. One message in, three safe, priced meal bundles out.</figcaption></figure>
+<p>FoodAgent's design rests on one rule: <strong>Claude talks, the engine decides.</strong> Claude understands the request, plans the steps and writes the replies. Every price, arrival time and allergy decision comes from a deterministic engine that Claude can only reach through six tools.</p>
+<pre><code>get_user_context · recommend_bundles · modify_bundle · check_eta · confirm_cart · place_order</code></pre>
+<h2>One request, five stages</h2>
+<ol>
+<li><strong>Guardrail.</strong> The message is screened for prompt injection, card numbers or OTPs, and attempts to set prices — before the model sees it.</li>
+<li><strong>Understand.</strong> Claude turns the sentence into structured constraints: headcount, veg count, allergens, budget, deadline.</li>
+<li><strong>Recommend.</strong> The engine filters out unsafe dishes, then an optimiser builds bundles with enough mains and breads for everyone, under budget and on time.</li>
+<li><strong>Reply.</strong> Claude explains the options. A checker confirms every ₹ amount and dish name came from the engine. If not, the reply is rewritten once, then replaced with a plain summary of the tool data.</li>
+<li><strong>Edit, confirm, order.</strong> Every edit is re-checked. Placing an order needs a confirm token plus an explicit "yes", and a retry can never charge twice.</li>
+</ol>
+<h2>Rules the model can't bend</h2>
+<ul>
+<li><strong>Allergens are absolute.</strong> "Contains", "may contain" and unverified allergen data all exclude a dish. "Nut allergy" means peanut and tree nut, and the reply says so. A severe allergy also drops kitchens that share fryers with nut dishes.</li>
+<li><strong>The AI cannot drop an allergy.</strong> Allergies typed in any message are merged into every tool call and re-checked at checkout. "Add butter chicken" is refused: it contains tree nut.</li>
+<li><strong>The budget is what you pay.</strong> Subtotal + 5% GST + delivery + packaging.</li>
+<li><strong>On time includes a buffer.</strong> ETA plus 20 minutes at dinner peak (10 otherwise) must be no later than the deadline.</li>
+<li><strong>When nothing fits, say so.</strong> It shows the closest options and what to relax — time or budget. It never bends a rule.</li>
+</ul>
+<p>Button edits (− / + / bin) skip the model entirely: about 1 ms, with the same safety checks. An over-budget change is refused right on the card.</p>
+<h2>A release gate, not a demo</h2>
+<p>An eval suite runs 240 generated requests through the engine, and an independent auditor recomputes every total, arrival time and allergen from the raw data instead of trusting the engine.</p>
+<div class="tbl"><table><thead><tr><th>Check</th><th class="n">Result</th></tr></thead><tbody>
+<tr><td>Allergen, diet, budget or deadline violations (617 bundles)</td><td class="n">0</td></tr>
+<tr><td>Unsafe "add this dish" requests refused</td><td class="n">2,633 / 2,633</td></tr>
+<tr><td>Attack inputs blocked (injection, card numbers, ₹0)</td><td class="n">18 / 18</td></tr>
+<tr><td>Normal messages wrongly blocked</td><td class="n">0 / 262</td></tr>
+<tr><td>Sampled conversations ordered cleanly</td><td class="n">48 / 48</td></tr>
+<tr><td>Engine recommendation speed</td><td class="n">median 0.1 s, p95 1.2 s</td></tr>
+</tbody></table></div>
+<h2>Caveats I'd rather state than hide</h2>
+<ul>
+<li>The test requests come from templates; messy real-world phrasing will score lower. A labelled set of real requests is next.</li>
+<li>In Claude mode, a dish search like "spicy paneer" currently returns full meal bundles and doesn't always apply the spice filter.</li>
+<li>A full live reply takes about 10–13 seconds, against under a second for the offline rule agent that runs the same engine.</li>
+</ul>
+<p>The pattern generalises well beyond food: let the model handle language and planning, keep every fact and every guarantee in deterministic code behind tools, and check the model's words against the tools' data before a user sees them.</p>
+</template>
+
+<script>
+{
+const posts=[
+ {slug:"safety-in-code",title:"Safety rules belong in code, not in the prompt",dek:"How ScanArth stops an LLM from diagnosing, prescribing or missing an emergency — with plain code that runs after the model.",date:"Nov 2026",tag:"AI safety",project:"ScanArth",stat:["4","independent urgent triggers"],img:"slides/s-07.jpg"},
+ {slug:"agent-guardrails",title:"Claude talks, the engine decides: guardrails for an ordering agent",dek:"Six tools, rules the model can't bend, and a release gate that audited 617 bundles with zero allergen, budget or deadline violations.",date:"Nov 2026",tag:"Agents",project:"FoodAgent",stat:["0","violations across 617 bundles"],img:"img/foodagent.jpg"},
+ {slug:"eval-harness",title:"Measuring an AI explainer against radiologist reports",dek:"Building an LLM-as-judge harness that scores urgent flags, sides and false alarms — and what it can't tell you.",date:"Nov 2026",tag:"Evaluation",project:"ScanArth",stat:["$0.004","per evaluated case"]},
+ {slug:"xray-phone-photos",title:"Teaching a chest X-ray model to read phone photos",dek:"Fine-tuning TorchXRayVision on simulated phone photos cut false hints by three-quarters. Here's how — and why explanations didn't improve yet.",date:"Nov 2026",tag:"ML",project:"ScanArth",stat:["45% → 10%","false hints, clean test set"]},
+ {slug:"llm-cost",title:"An LLM explanation for a tenth of a cent",dek:"Prompt caching, smaller images, a result cache and spending extra only where it matters.",date:"Nov 2026",tag:"Cost",project:"ScanArth",stat:["~$0.001","per explanation"]}
+];
+const side=[
+ {img:"img/foodagent.jpg",alt:"FoodAgent web chat start screen",where:"Public repo · Python",h:"FoodAgent",d:"Agentic food-ordering assistant: one chat message to three safe, priced group-order bundles. Claude talks; a deterministic engine decides.",t:["Claude tool use","Postgres","Guardrails","Evals"],links:[["Read the note","#agent-guardrails"],["GitHub ↗","https://github.com/manishsdbct/foodagent"]]},
+ {where:"Public repo · PyTorch",h:"X-ray model fine-tuning",d:"Fine-tunes TorchXRayVision's DenseNet-121 for phone photos of X-rays: simulated photo effects, held rare findings, recalibrated operating points.",t:["PyTorch","TorchXRayVision","Computer vision"],links:[["Read the note","#xray-phone-photos"],["GitHub ↗","https://github.com/manishsdbct/xray-base-model-finetune"]]},
+ {where:"Public repo · MCP",h:"X-ray Saathi MCP server",d:"Lets Claude Code or Claude Desktop work with ScanArth: API tools for scans and translations, read-only database tools for stats and audits.",t:["MCP","Python","SQLite / Postgres"],links:[["GitHub ↗","https://github.com/manishsdbct/xray-saathi-mcp"]]},
+ {where:"Private repo · Android",h:"ScanArth Android app",d:"Guided camera for photographing scan films with CameraX, then the same API flow as the web app; release build for a Play Store pilot.",t:["Kotlin","Jetpack Compose","CameraX"],links:[]},
+ {where:"Public repo · AI-Tech-POC",h:"LLM gateway",d:"Central FastAPI gateway to OpenAI and Anthropic: auth, per-service rate limits, caching, cost-aware routing with fallback, Postgres budgets.",t:["FastAPI","Postgres","LLM ops"],links:[["GitHub ↗","https://github.com/manishsdbct/AI-Tech-POC"]]},
+ {where:"Public repo · AI-Tech-POC",h:"RAG and a fine-tuned tool router",d:"Multi-format RAG with swappable Chroma/pgvector and a tool-calling agent; plus a LoRA fine-tune of Llama 3.2 1B with MLX that routes support queries to tools.",t:["RAG","pgvector","MLX","LoRA"],links:[["GitHub ↗","https://github.com/manishsdbct/AI-Tech-POC"]]}
+];
+const job=[
+ {where:"Samsung Research · 2022 – now",big:"~80%",h:"LLM content curation",d:"AI-powered curation workflows with LLMs and prompt orchestration removed nearly 80% of manual effort on a Smart TV learning platform.",t:["LLMs","LangChain","Bedrock"]},
+ {where:"Samsung Research",h:"AI learning assistant",d:"Turns live lecture audio into summaries, quizzes and interactive learning workflows, with agentic and RAG pipelines.",t:["Agentic AI","RAG","Claude","OpenAI"]},
+ {where:"Rakuten · 2019 – 2022",big:"2.3x",h:"Monolith to microservices",d:"Led the migration: APIs 2.3x faster, deployments from 6 hours to 2, and 3000+ QPS at peak with low latency.",t:["Java","Spring Boot","Kafka","AWS"]},
+ {where:"MakeMyTrip · 2018",big:"1.7x",h:"Faster booking",d:"Backend optimisation and RabbitMQ-based async workflows improved booking-platform response time 1.7x.",t:["Java","RabbitMQ","MySQL"]}
+];
+const slides=["Title","The problem","Four guided steps","Results in English or Hindi","Photo help","Architecture","Safety rules","Prototype status","Before public launch","Roadmap","What we need"];
+
+const words=s=>document.getElementById('t-'+s).content.textContent.trim().split(/\s+/).length;
+posts.forEach(p=>p.min=Math.max(1,Math.round(words(p.slug)/220)));
+const chips=a=>`<ul class="chips">${a.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+const pcard=(p,big)=>`<a class="post${big?' big':''}" href="#${p.slug}">${big&&p.img?`<img src="${p.img}" alt="" loading="lazy">`:''}<div style="display:flex;flex-direction:column;height:100%"><div class="pm"><b>${p.tag}</b><span>${p.project}</span><span>${p.date}</span><span>${p.min} min read</span></div><h3>${p.title}</h3><p>${p.dek}</p><div class="stat"><strong>${p.stat[0]}</strong><span>${p.stat[1]}</span></div></div></a>`;
+const wcard=w=>`<article class="wcard">${w.img?`<img src="${w.img}" alt="${w.alt}" loading="lazy">`:''}<div class="where">${w.where}</div>${w.big?`<div class="big">${w.big}</div>`:''}<h3>${w.h}</h3><p>${w.d}</p>${w.links&&w.links.length?`<div class="links">${w.links.map(l=>`<a class="more" href="${l[1]}"${l[1].startsWith('http')?' target="_blank" rel="noopener"':''}>${l[0]}${l[1].startsWith('#')?' →':''}</a>`).join('')}</div>`:''}${chips(w.t)}</article>`;
+
+document.getElementById('homePosts').innerHTML=pcard(posts[0],true)+posts.slice(1,4).map(p=>pcard(p)).join('');
+document.getElementById('homeWork').innerHTML=[side[0],side[1],side[2]].map(wcard).join('');
+document.getElementById('side').innerHTML=side.map(wcard).join('');
+document.getElementById('job').innerHTML=job.map(wcard).join('');
+
+const tags=['All',...new Set(posts.map(p=>p.tag))];
+let cur='All';
+const fl=document.getElementById('filters'),all=document.getElementById('allPosts');
+const renderAll=()=>{fl.innerHTML=tags.map(t=>`<button type="button" aria-pressed="${t===cur}">${t}</button>`).join('');all.innerHTML=posts.filter(p=>cur==='All'||p.tag===cur).map(p=>pcard(p)).join('')};
+fl.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;cur=b.textContent;renderAll()});
+renderAll();
+
+const art=document.getElementById('art');
+const showPost=p=>{
+  const i=posts.indexOf(p),nx=posts[(i+1)%posts.length];
+  art.innerHTML=`<a class="back" href="#writing">← All writing</a><h1>${p.title}</h1><p class="dek">${p.dek}</p><div class="pm"><span><b>Manish Garg</b></span><span>${p.date}</span><span>${p.min} min read</span><span>${p.tag} · ${p.project}</span></div><div class="body">${document.getElementById('t-'+p.slug).innerHTML}</div><div class="next"><span class="mute" style="font-size:14px">Next note</span>${pcard(nx)}</div>`;
+  art.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.className='copy';b.type='button';b.textContent='Copy';b.addEventListener('click',async()=>{try{await navigator.clipboard.writeText(pre.querySelector('code').textContent);b.textContent='Copied'}catch(_){b.textContent='Select to copy'}});pre.prepend(b)});
+  document.title=p.title+' — Manish Garg';
+};
+
+let si=0;
+const sImg=document.getElementById('slideImg'),sCap=document.getElementById('slideCap'),th=document.getElementById('thumbs');
+th.innerHTML=slides.map((s,i)=>`<button type="button" data-i="${i}" aria-label="Slide ${i+1}: ${s}"><img src="slides/s-${String(i+1).padStart(2,'0')}.jpg" alt=""></button>`).join('');
+const setSlide=i=>{si=(i+slides.length)%slides.length;sImg.src=`slides/s-${String(si+1).padStart(2,'0')}.jpg`;sImg.alt=`ScanArth prototype review, slide ${si+1}: ${slides[si]}`;sCap.textContent=`${slides[si]} · ${si+1} of ${slides.length}`;th.querySelectorAll('button').forEach((b,k)=>k===si?b.setAttribute('aria-current','true'):b.removeAttribute('aria-current'))};
+document.getElementById('prev').addEventListener('click',()=>setSlide(si-1));
+document.getElementById('next').addEventListener('click',()=>setSlide(si+1));
+th.addEventListener('click',e=>{const b=e.target.closest('button');if(b)setSlide(+b.dataset.i)});
+setSlide(0);
+
+document.getElementById('copyMail').addEventListener('click',async e=>{try{await navigator.clipboard.writeText('manish91garg@gmail.com');e.target.textContent='Copied'}catch(_){e.target.textContent='Select to copy'}});
+
+const route=()=>{
+  const h=location.hash.slice(1)||'home';
+  const p=posts.find(x=>x.slug===h);
+  const v=p?'post':(['home','work','writing','about'].includes(h)?h:'home');
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('on',s.id==='v-'+v));
+  if(p)showPost(p);else document.title='Manish Garg — Engineering notes';
+  const navOn=p?'writing':v;
+  document.querySelectorAll('#nav a').forEach(a=>a.getAttribute('href')==='#'+navOn?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  window.scrollTo(0,0);
+};
+addEventListener('hashchange',route);route();
+}
+</script>
+</body>
+</html>
