@@ -1,0 +1,3 @@
+.reveal-item{opacity:0;transform:translateY(18px);transition:opacity .55s ease,transform .55s ease}.revealed{opacity:1;transform:none}.reveal-item:nth-child(2){transition-delay:.08s}.reveal-item:nth-child(3){transition-delay:.16s}
+:where(.btn,.post,.wcard,.panel,.stat-grid article,.expertise-grid article){transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease}.post:hover,.wcard:hover,.panel:hover{transform:translateY(-3px)}
+@media(prefers-reduced-motion:reduce){.reveal-item{opacity:1!important;transform:none!important;transition:none!important}}
